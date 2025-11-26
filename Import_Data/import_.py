@@ -59,17 +59,17 @@ def insert_related(cur, appid, game):
                 RETURNING id;""",
             (dev,)
         )
-        try:
-            dev_id = cur.fetchone()[0]
-        except:
-            dev_id = None
 
-        if dev_id is None:
+        row = cur.fetchone()
+        if row:
+            dev_id = row[0]
+        else:
             cur.execute(
                 "SELECT id FROM developers WHERE developer_name = %s;",
                 (dev,)
             )
-            dev_id = cur.fetchone()[0]
+            row = cur.fetchone()
+            dev_id = row[0] if row else None
 
         cur.execute(
             """INSERT INTO developers_game (id_developer, id_game) VALUES (%s, %s) 
@@ -80,39 +80,72 @@ def insert_related(cur, appid, game):
     # PUBLISHERS
     for pub in game.get("publishers", []):
         cur.execute(
-            "INSERT INTO publishers (publisher_name) VALUES (%s) RETURNING id;",
+            """INSERT INTO publishers (publisher_name) VALUES (%s)
+            ON CONFLICT (publisher_name) DO NOTHING RETURNING id;""",
             (pub,)
         )
-        pub_id = cur.fetchone()[0]
+        row = cur.fetchone()
+        if row:
+            pub_id = row[0]
+        else:
+            cur.execute(
+                "SELECT id FROM publishers WHERE publisher_name = %s;",
+                (pub,)
+            )
+            row = cur.fetchone()
+            pub_id = row[0] if row else None
 
         cur.execute(
-            "INSERT INTO publishers_game (id_publisher, id_game) VALUES (%s, %s);",
+            """INSERT INTO publishers_game (id_publisher, id_game) VALUES (%s, %s)
+            ON CONFLICT DO NOTHING;""",
             (pub_id, appid)
         )
 
     # CATEGORIES
     for cat in game.get("categories", []):
         cur.execute(
-            "INSERT INTO categories (category_name) VALUES (%s) RETURNING id;",
+            """INSERT INTO categories (category_name) VALUES (%s) 
+            on conflict (category_name) do nothing RETURNING id;""",
             (cat,)
         )
-        cat_id = cur.fetchone()[0]
+        row = cur.fetchone()
+        if row:
+            cat_id = row[0]
+        else:
+            cur.execute(
+                "SELECT id FROM categories WHERE category_name = %s;",
+                (cat,)
+            )
+            row = cur.fetchone()
+            cat_id = row[0] if row else None
 
         cur.execute(
-            "INSERT INTO categories_game (id_category, id_game) VALUES (%s, %s);",
+            """INSERT INTO categories_game (id_category, id_game) VALUES (%s, %s)
+            ON CONFLICT DO NOTHING;""",
             (cat_id, appid)
         )
 
     # GENRES
     for gen in game.get("genres", []):
         cur.execute(
-            "INSERT INTO genres (genre_name) VALUES (%s) RETURNING id;",
+            """INSERT INTO genres (genre_name) VALUES (%s) 
+            ON CONFLICT (genre_name) DO NOTHING RETURNING id;""",
             (gen,)
         )
-        gen_id = cur.fetchone()[0]
+        row = cur.fetchone()
+        if row:
+            gen_id = row[0]
+        else:
+            cur.execute(
+                "SELECT id FROM genres WHERE genre_name = %s;",
+                (gen,)
+            )
+            row = cur.fetchone()
+            gen_id = row[0] if row else None
 
         cur.execute(
-            "INSERT INTO genres_game (id_genre, id_game) VALUES (%s, %s);",
+            """INSERT INTO genres_game (id_genre, id_game) VALUES (%s, %s)
+            ON CONFLICT DO NOTHING;""",
             (gen_id, appid)
         )
     # SCREENSHOTS (corrigindo erro scrennshots)
@@ -139,20 +172,20 @@ def insert_related(cur, appid, game):
                 "INSERT INTO tags (tag_name) VALUES (%s) ON CONFLICT (tag_name) DO NOTHING RETURNING id;",
                 (str(tag_name),)
             )
-            try:
-                tag_id = cur.fetchone()[0]
-            except:
-                tag_id = None
-
-            if tag_id is None:
+            row = cur.fetchone()
+            if row:
+                tag_id = row[0]
+            else:
                 cur.execute(
                     "SELECT id FROM tags WHERE tag_name = %s;",
                     (str(tag_name),)
                 )
-                tag_id = cur.fetchone()[0]
+                row = cur.fetchone()
+                tag_id = row[0] if row else None
 
             cur.execute(
-                "INSERT INTO tags_game (id_tag, id_game, tag_score) VALUES (%s, %s, %s);",
+                """INSERT INTO tags_game (id_tag, id_game, tag_score) VALUES (%s, %s, %s)
+                ON CONFLICT DO NOTHING;""",
                 (tag_id, appid, tag_score)
             )
 
@@ -161,17 +194,16 @@ def insert_related(cur, appid, game):
             "INSERT INTO languages (language_name) VALUES (%s) ON CONFLICT (language_name) DO NOTHING RETURNING id;",
             (lang,)
         )
-        try:
-            lang_id = cur.fetchone()[0]
-        except:
-            lang_id = None
-
-        if lang_id is None:
+        row = cur.fetchone()
+        if row:
+            lang_id = row[0]
+        else:
             cur.execute(
                 "SELECT id FROM languages WHERE language_name = %s;",
                 (lang,)
             )
-            lang_id = cur.fetchone()[0]
+            row = cur.fetchone()
+            lang_id = row[0] if row else None
 
         cur.execute(
             "INSERT INTO languages_game (id_language, id_game) VALUES (%s, %s) ON CONFLICT DO NOTHING;",
@@ -183,20 +215,19 @@ def insert_related(cur, appid, game):
             "INSERT INTO audio_languages (audio_language_name) VALUES (%s) ON CONFLICT (audio_language_name) DO NOTHING RETURNING id;",
             (audio_lang,)
         )
-        try:
-            audio_id = cur.fetchone()[0]
-        except:
-            audio_id = None
-
-        if audio_id is None:
+        row = cur.fetchone()
+        if row:
+            audio_id = row[0]
+        else:
             cur.execute(
                 "SELECT id FROM audio_languages WHERE audio_language_name = %s;",
                 (audio_lang,)
             )
-            audio_id = cur.fetchone()[0]
+            row = cur.fetchone()
+            audio_id = row[0] if row else None
 
         cur.execute(
-            "INSERT INTO audio_languages_game (id_audio, id_game) VALUES (%s, %s) ON CONFLICT DO NOTHING;",
+            "INSERT INTO audio_languages_game (id_audio, id_game) VALUES (%s, %s) ON CONFLICT  DO NOTHING;",
             (audio_id, appid)
         )
 
