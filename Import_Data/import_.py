@@ -1,4 +1,5 @@
-﻿import psycopg2
+﻿from time import sleep
+import psycopg2
 import ijson
 from  util import DB_CONFIG
 # =====================================================================
@@ -9,13 +10,11 @@ def insert_game(cur, appid, game):
     columns = [
         "appid", "name", "release_date", "estimated_owners", "peak_ccu",
         "required_age", "price", "dlc_count", "detailed_description",
-        "short_description", "supported_languages", "full_audio_languages",
-        "reviews", "header_image", "website", "support_url", "support_email",
+        "short_description","reviews", "header_image", "website", "support_url", "support_email",
         "windows", "mac", "linux", "metacritic_score", "metacritic_url",
         "user_score", "positive", "negative", "score_rank", "achievements",
         "recommendations", "notes", "average_playtime_forever",
-        "average_playtime_2weeks", "median_playtime_forever",
-        "median_playtime_2weeks"
+        "average_playtime_2weeks", "median_playtime_forever","median_playtime_2weeks"
     ]
 
     values = [appid] + [game.get(col) for col in columns[1:]]
@@ -133,28 +132,29 @@ def insert_related(cur, appid, game):
         )
 
     # TAGS
-    tag_dict = game.get("tags", {})
-    for tag_name, tag_score in tag_dict.items():
-        cur.execute(
-            "INSERT INTO tags (tag_name) VALUES (%s) ON CONFLICT (tag_name) DO NOTHING RETURNING id;",
-            (str(tag_name),)
-        )
-        try:
-            tag_id = cur.fetchone()[0]
-        except:
-            tag_id = None
-
-        if tag_id is None:
+    tag_dict = dict(game.get("tags", {}))
+    if(tag_dict):
+        for tag_name, tag_score in tag_dict.items():
             cur.execute(
-                "SELECT id FROM tags WHERE tag_name = %s;",
+                "INSERT INTO tags (tag_name) VALUES (%s) ON CONFLICT (tag_name) DO NOTHING RETURNING id;",
                 (str(tag_name),)
             )
-            tag_id = cur.fetchone()[0]
+            try:
+                tag_id = cur.fetchone()[0]
+            except:
+                tag_id = None
 
-        cur.execute(
-            "INSERT INTO tags_game (id_tag, id_game, tag_score) VALUES (%s, %s, %s);",
-            (tag_id, appid, tag_score)
-        )
+            if tag_id is None:
+                cur.execute(
+                    "SELECT id FROM tags WHERE tag_name = %s;",
+                    (str(tag_name),)
+                )
+                tag_id = cur.fetchone()[0]
+
+            cur.execute(
+                "INSERT INTO tags_game (id_tag, id_game, tag_score) VALUES (%s, %s, %s);",
+                (tag_id, appid, tag_score)
+            )
 
     for lang in game.get("supported_languages", []):
         cur.execute(

@@ -159,7 +159,7 @@ def create_tables():
             audio_language_name TEXT UNIQUE NOT NULL
         );
                 
-        CREATE TABLE languages_game (
+        CREATE TABLE audio_languages_game (
             id_audio INT,
             id_game INT,
             PRIMARY KEY (id_audio, id_game),
