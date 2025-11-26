@@ -8,8 +8,8 @@ def create_tables():
     cur.execute("""
         CREATE TABLE games (
             appid              INTEGER PRIMARY KEY,
-            name               TEXT,
-            release_date       TEXT,
+            name               TEXT not null,
+            release_date       TEXT not null,
             estimated_owners   TEXT,
             peak_ccu           INTEGER,
             required_age       INTEGER,
@@ -44,15 +44,15 @@ def create_tables():
         CREATE TABLE packages (
             id SERIAL PRIMARY KEY,
             appid INTEGER REFERENCES games(appid) ON DELETE CASCADE,
-            title TEXT,
-            description TEXT
+            title TEXT not null,
+            description TEXT not null
         );
 
 
         CREATE TABLE subs (
             id SERIAL PRIMARY KEY,
             package_id INTEGER REFERENCES packages(id) ON DELETE CASCADE,
-            text TEXT,
+            text TEXT not null,
             description TEXT,
             price NUMERIC
         );
@@ -74,7 +74,7 @@ def create_tables():
 
         CREATE TABLE publishers (
             id SERIAL PRIMARY KEY,
-            publisher_name TEXT not null
+            publisher_name TEXT unique not null
         );
 
         create table publishers_game (
@@ -88,7 +88,7 @@ def create_tables():
 
         CREATE TABLE categories (
             id SERIAL primary key,
-            category_name TEXT not NULL
+            category_name TEXT unique not NULL
         );
 
         create table categories_game (
@@ -102,7 +102,7 @@ def create_tables():
 
         CREATE TABLE genres (
             id SERIAL PRIMARY KEY,
-            genre_name TEXT not NULL
+            genre_name TEXT unique not NULL
         );
 
         create table genres_game (
@@ -116,14 +116,14 @@ def create_tables():
         CREATE TABLE screenshots (
             id SERIAL PRIMARY KEY,
             appid INTEGER REFERENCES games(appid) ON DELETE CASCADE,
-            screenshot_url TEXT
+            screenshot_url TEXT not null
         );
 
 
         CREATE TABLE movies (
             id SERIAL PRIMARY key,
             appid INTEGER REFERENCES games(appid) ON DELETE CASCADE,
-            movie_url TEXT
+            movie_url TEXT not null
         );
 
 
