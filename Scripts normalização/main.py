@@ -3,6 +3,7 @@ from DDL.create_tables_ import create_tables
 from CODE.create_functions import create_functions
 from CODE.create_procedures import create_procedures
 from CODE.create_indexes import create_indexes
+from CODE.create_views import create_views
 
 if __name__ == "__main__":
     try:
@@ -25,3 +26,8 @@ if __name__ == "__main__":
     except Exception as e:
         print(f"Erro ao criar índices: {e}")
     import_games()
+
+    try:
+        create_views()
+    except Exception as e:
+        print(f"Erro ao criar views: {e}")
