@@ -45,12 +45,12 @@ Corrigir problemas estruturais, normalizar, ajustar relações e preparar um nov
 - [x] Aplicar as correções no banco
 - [x] Criar um script de migração da versão antiga para a nova (preservando 100% dos dados)
 - [x] Documentar e justificar cada modificação realizada
-- [ ] Criar índices para todas as tabelas
-  - [ ] Explicar utilidade dos índices para:
-    - [ ] Performance
-    - [ ] Integridade
-    - [ ] Consultas frequentes
-- [ ] Criar o novo dicionário de dados
+- [x] Criar índices para todas as tabelas
+  - [x] Explicar utilidade dos índices para:
+    - [x] Performance
+    - [x] Integridade
+    - [x] Consultas frequentes
+- [x] Criar o novo dicionário de dados
 
 # 🧩 Entregável 3 — Automatizações no PostgreSQL
 
@@ -58,19 +58,19 @@ Corrigir problemas estruturais, normalizar, ajustar relações e preparar um nov
 Criar automações significativas que agreguem valor ao domínio da base.
 
 ## Devem ser criados
-- [ ] 3 Triggers
-- [ ] 3 Functions
-- [ ] 3 Views
-- [ ] 3 Procedures
+- [x] 3 Triggers
+- [x] 3 Functions
+- [x] 3 Views
+- [x] 3 Procedures
 
 ## Regras
-- [ ] Automatizações devem ser coerentes com o domínio
-- [ ] Não pode ser trivial (ex.: SELECT simples)
-- [ ] Cada automação deve ter justificativa explicando:
-  - [ ] Por que existe
-  - [ ] Qual problema resolve
-  - [ ] Como melhora o sistema
-- [ ] Adicionar nova seção no novo dicionário de dados
+- [x] Automatizações devem ser coerentes com o domínio
+- [x] Não pode ser trivial (ex.: SELECT simples)
+- [x] Cada automação deve ter justificativa explicando:
+  - [x] Por que existe
+  - [x] Qual problema resolve
+  - [x] Como melhora o sistema
+- [x] Adicionar nova seção no novo dicionário de dados
 
 ---
 
@@ -80,9 +80,9 @@ Criar automações significativas que agreguem valor ao domínio da base.
 Desenvolver o DW usando modelagem dimensional.
 
 ## Checklist
-- [ ] Escolher o tipo de modelagem (estrela, floco de neve etc.)
-- [ ] Criar pelo menos 1 tabela fato
-- [ ] Criar pelo menos 3 dimensões
+- [x] Escolher o tipo de modelagem (estrela, floco de neve etc.)
+- [x] Criar pelo menos 1 tabela fato
+- [x] Criar pelo menos 3 dimensões
 - [ ] Justificar o DW, explicando:
   - [ ] Quais perguntas de negócio ele responde
   - [ ] Qual valor analítico ele gera
