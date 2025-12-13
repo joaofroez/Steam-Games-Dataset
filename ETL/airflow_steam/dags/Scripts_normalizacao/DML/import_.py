@@ -55,11 +55,6 @@ def insert_game(cur, game):
     pos = safe_int(game.get("positive"), default=0)
     neg = safe_int(game.get("negative"), default=0)
     
-    if game.get("user_score") == 0 and (pos + neg) > 0:
-        user_score = (pos / (pos + neg)) * 100
-    else:
-        user_score = safe_int_nullable(game.get("user_score"))
-
     # Montagem do Dicionário com a Lógica de NULL
     clean_data = {
         # === TABELA GAMES (NOT NULL estritos) ===
@@ -98,13 +93,13 @@ def insert_game(cur, game):
         # Use safe_int_nullable aqui, pois 0 mudaria a média estatística
         "metacritic_score": safe_int_nullable(game.get("metacritic_score")),
         "score_rank": safe_int_nullable(game.get("score_rank")),
-        "user_score": user_score,
+        "user_score": None,
 
         # Contadores (0 é ok)
         "recommendations": safe_int(game.get("recommendations"), default=0),
         "achievements": safe_int(game.get("achievements"), default=0),
-        "positive": safe_int(game.get("positive"), default=0),
-        "negative": safe_int(game.get("negative"), default=0),
+        "positive": pos,
+        "negative": neg,
     }
 
     # Definição das colunas

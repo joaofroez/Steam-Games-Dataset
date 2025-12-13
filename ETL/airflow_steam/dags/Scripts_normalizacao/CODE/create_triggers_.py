@@ -6,7 +6,9 @@ def create_triggers():
     cur = conn.cursor()
     cur.execute("SET search_path TO public;")
     conn.commit()
-    
+    # Aqui foi alterado a lógica da trigger fn_limit_tags_per_game devido ter jogos que quebram a regra de negócio.
+    # Retorno alterado para NULL
+    # Outra alteração foi o WHEN em update_user_score_before para evitar execuções desnecessárias
     cur.execute("""
         CREATE OR REPLACE FUNCTION update_user_score_before()
         RETURNS TRIGGER AS $$
@@ -23,13 +25,8 @@ def create_triggers():
             END IF;
 
             total := pos + neg;
-
-            IF total = 0 THEN
-                NEW.user_score := NULL;
-            ELSE
-                
-                NEW.user_score := ROUND((pos::numeric * 100) / total)::INTEGER;
-            END IF;
+  
+            NEW.user_score := ROUND((pos::numeric * 100) / total)::INTEGER;
 
             RETURN NEW;
         END;
@@ -38,6 +35,7 @@ def create_triggers():
         CREATE TRIGGER trg_update_user_score
         BEFORE INSERT OR UPDATE ON detalhes
         FOR EACH ROW
+        WHEN (NEW.positive != 0 AND NEW.negative != 0)
         EXECUTE FUNCTION update_user_score_before();
 
         CREATE OR REPLACE FUNCTION trg_add_mature_tag_improved()
@@ -51,7 +49,6 @@ def create_triggers():
             RETURN NEW;
         END;
         $$ LANGUAGE plpgsql;
-
 
         CREATE TRIGGER trg_games_add_mature
         AFTER INSERT ON games
@@ -68,16 +65,15 @@ def create_triggers():
             SELECT COUNT(*) INTO qtd_tags_atuais
             FROM tags_game
             WHERE id_game = NEW.id_game;
-
             
             IF qtd_tags_atuais >= LIMITE_TAGS THEN
-                RAISE EXCEPTION 'Limite atingido: o jogo % já possui o máximo de % tags permitidas.', NEW.id_game, LIMITE_TAGS;
+                RETURN NULL; 
             END IF;
 
             RETURN NEW;
         END;
         $$ LANGUAGE plpgsql;
-
+        
         CREATE TRIGGER tg_check_tag_limit
         BEFORE INSERT ON tags_game
         FOR EACH ROW
