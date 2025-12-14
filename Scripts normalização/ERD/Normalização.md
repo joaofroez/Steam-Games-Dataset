@@ -3,7 +3,7 @@
 A tabela games, que antes da normalização era uma tabela única com todas as informações
 em suas colunas, foi desmembrada. Atributos vinculados à tabela games se tornaram tabelas
 próprias, e algumas foram conectadas conforme as necessidades de cada atributo através de
-IDs (relacionamentos). Após o processo, o banco de dados passou a ter 21 tabelas.
+IDs (relacionamentos). Após o processo, o banco de dados passou a ter 22 tabelas.
 
 Regras Aplicadas:
 - Normalização de colunas multivaloradas;
@@ -56,14 +56,11 @@ Regras Aplicadas:
 - Na tabela detalhes: 
 estimated_owners foi renomeada e dividida em owners_min e owners_max por ser uma coluna multivalorada com valores máximos e mínimos de usuários, o que dificultaria o select.
 
-score_rank - alterado o tipo de dado de TEXT para INTEGER.
+    - score_rank - alterado o tipo de dado de TEXT para INTEGER.
+    - Nas colunas em que a constrain NOT NULL foi removida, a ausência de valores não alterava a integridade dos dados.
 
 - Na tabela games:
 
-release_date - alterado o tipo de dado de TEXT para DATE.
-
-- Nas colunas em que a constrain NOT NULL foi removida, a ausência de valores não alterava a integridade dos dados.
+    - release_date - alterado o tipo de dado de TEXT para DATE.
 
 - Nas tabelas associativas, a constrain UNIQUE foi acrescentada pois determinados valores deveriam existir uma única vez na tabela, sem duplicidade.
-
-- 
